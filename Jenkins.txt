@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven "Maven3"
+    }
+       
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/naresh785/IDE_test.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        
+        stage('Create Docker Image') {
+            steps {
+                sh 'docker build -t dock1 .'
+            }
+        }
+               
+        stage('Run Docker Container') {
+            steps {
+                sh 'docker run -d -p 9000:8080 --name dock_container -t docker1'
+            }
+        }
+    }
+}
